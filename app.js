@@ -8,6 +8,23 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express(); 
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+io.on("connection",(socket)=>{
+  
+  console.log("connect aayi mwonuse...");
+
+  socket.emit('message','welcome to JusTalk')
+
+  socket.broadcast.emit('message','A user has joined the chat')
+
+  socket.on("disconnect",()=>{
+    console.log("connection closed");
+    io.emit('message','A user has left the chat')
+  })
+
+})
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -38,4 +55,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+module.exports = {app: app, server: server};
