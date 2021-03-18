@@ -10,15 +10,18 @@
     }
 </script>
 
+<script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
+
 <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 <script src="https://use.fontawesome.com/1c6f725ec5.js"></script>
 
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 <style>
-    .dropdown-toggle::after { 
-            content: none; 
-        } 
+    .dropdown-toggle::after {
+        content: none;
+    }
 </style>
 
 {{!-- <div class="green-background"></div> --}}
@@ -26,6 +29,10 @@
     <section class="left">
         <div class="profile">
             <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1089577/user.jpg">
+            
+            <p id="username" style="margin-top: auto;margin-right: auto">{{userData.username}}</p>
+            
+
             <div class="icons">
                 <i class="fa fa-commenting fa-lg" aria-hidden="true"></i>
                 <i class="fa fa-bars fa-lg" aria-hidden="true"></i>
@@ -38,30 +45,21 @@
             </div>
         </div>
         <div class="contact-list">
-            <div class="contact active-contact" id="6"><img
+            {{!-- active-contact --}}
+            {{#each users}}
+            <div class="contact" id="6" onclick="getChat({{this._id}})"><img
                     src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1089577/contact7.JPG" alt="profilpicture">
                 <div class="contact-preview">
                     <div class="contact-text">
-                        <h1 class="font-name">Cool Kids</h1>
-                        <p class="font-preview">Mmh, lecker :) Freu mich!</p>
+                        <h1 class="font-name">{{this.username}}</h1>
+                        <p class="font-preview">Last message</p>
                     </div>
                 </div>
                 <div class="contact-time">
                     <p>17:54</p>
                 </div>
             </div>
-            <div class="contact" id="5"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1089577/contact6.JPG"
-                    alt="profilpicture">
-                <div class="contact-preview">
-                    <div class="contact-text">
-                        <h1 class="font-name">Family</h1>
-                        <p class="font-preview">Ich schätze so um 7 Uhr, aber melde mich noch!</p>
-                    </div>
-                </div>
-                <div class="contact-time">
-                    <p>17:44</p>
-                </div>
-            </div>
+            {{/each}}
         </div>
     </section>
 
@@ -75,8 +73,8 @@
             <i class="fa fa-search fa-lg" aria-hidden="true"></i>
             <i class="fa fa-paperclip fa-lg" aria-hidden="true"></i>
             <div class="dropdown" style="margin: auto;">
-                <a class=" dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class=" dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-bars fa-lg" aria-hidden="true" id="show-contact-information"></i>
                 </a>
 
@@ -85,30 +83,53 @@
                     <a class="dropdown-item" href="/logout">Logout</a>
                 </div>
             </div>
-            
+
             <i class="fa fa-times fa-lg" aria-hidden="true" id="close-contact-information"></i>
-            
+
         </div>
         <div class="wrap-chat">
-            <div class="chat"></div>
+            <div class="chat">
+                <div class="chatBubbleMe" id="chatBubbleMe" style="background: #dcf8c6;
+                                                             margin: 0px 0px 10px auto;border-radius: 7px;
+                                                             box-shadow: 0 2px 2px rgb(0 0 0 / 5%);
+                                                             padding: 5px 7px;
+                                                             width: 350px;
+                                                             max-width: 100%;
+                                                             position: relative;
+                                                             display: none;">
+                    <div class="my-mouth"></div>
+                    <div class="content" style="margin: 0.5em 0;
+                        line-height: 120%;
+                        font-size: 0.9em;" id="chatBubbleMeContent"></div>
+                    <div class="time"></div>
+                </div>
+            </div>
             <div class="information"></div>
         </div>
         <div class="wrap-message">
             <i class="fa fa-smile-o fa-lg" aria-hidden="true"></i>
             <div class="message">
-                <input type="text" class="input-message" placeholder="Schreibe eine Nachricht">
+                <input type="text" id="inputMessage" class="input-message" placeholder="Type a message">
             </div>
-            <i class="fa fa-microphone fa-lg" aria-hidden="true"></i>
+            {{!-- <i class="fa fa-microphone fa-lg" aria-hidden="true"></i> --}}
+            <button id="send"><span class="iconify" data-inline="false" id="" data-icon="fluent:send-16-filled" style="transform: rotate(
+                360deg
+                );
+                    color: #aaaaaa;
+                    text-align: center;
+                    font-size: 1.33333333em;
+                    line-height: 0.75em;
+                    display: inline-block;
+                    margin: auto;
+                    vertical-align: -15%;
+                    width: 60px;">
+                </span></button>
+
         </div>
     </section>
 </div>
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
-
-<script src="/socket.io/socket.io.js"></script>
-<script>
-    var socket = io();
-</script>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -119,3 +140,34 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
+
+<script>
+    function getChat(secondPerson) {
+        console.log('started')
+        var secondPerson = secondPerson
+        var contact =
+
+            $.ajax({
+                url: form.attr('action'),
+
+            })
+    }
+</script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io();
+    document.getElementById('send').addEventListener("click", () => {
+        console.log('mone clicki')
+        let txt = document.getElementById('inputMessage').value;
+        socket.emit("message", txt)
+    })
+
+    socket.on("board_content", (msg) => {
+        console.log(msg)
+        document.getElementById("chatBubbleMe").style.display = "block"
+        document.getElementById("chatBubbleMeContent").innerHTML = msg
+
+
+    })
+</script>

@@ -121,7 +121,7 @@
         e.preventDefault(); // prevent actual form submit
         var form = $(this);
         var url = form.attr('action'); //get submit url [replace url here if desired]
-        console.log('ethiyalloo')
+        console.log('ethiyalloo',form.serialize())
         $.ajax({
             method: "POST",
             url: url,

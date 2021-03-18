@@ -15,14 +15,21 @@ var verifyLogin = (req, res, next) => {
 }
 
 /* GET home page. */
-router.get('/', verifyLogin, function (req, res, next) {
+router.get('/', verifyLogin, async function (req, res, next) {
 
-  res.render('home');
+  let users =await userHelper.getAllUsers()
+  
+  res.render('home',{users,userData:req.session.user});
 
 });
 
 router.get('/login', (req, res) => {
-  res.render('login')
+  if(req.session.loggedIn){
+    res.redirect('/')
+  }else{
+    res.render('login')
+  }
+  
 })
 
 router.post('/login', (req, res) => {
@@ -49,6 +56,7 @@ router.get('/signup', (req, res) => {
 router.post('/signup', (req, res) => {
   console.log('***', req.body);
   userHelper.signup(req.body).then((response) => {
+    console.log('rees',response)
 
     if (response.user) {
       req.session.loggedIn = true;
@@ -64,6 +72,10 @@ router.get('/logout', (req, res) => {
   res.redirect('/')
 })
 
+router.get('/getChat:id',(req,res)=>{
+  console.log('usere',req.params.id);
 
+  let oldChat = userHelper.getOldChat(req.params.id,req.session.user._id)
+})
 
 module.exports = router;

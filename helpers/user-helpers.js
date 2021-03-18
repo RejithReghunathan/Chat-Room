@@ -10,13 +10,15 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             console.log(userData);
 
-            let emailExists = db.get().collection(collections.USER_COLLECTION).findOne({
+            let emailExists =await db.get().collection(collections.USER_COLLECTION).findOne({
                 email: userData.email
             })
 
-            let usernameExists = db.get().collection(collections.USER_COLLECTION).findOne({
+            let usernameExists =await db.get().collection(collections.USER_COLLECTION).findOne({
                 username: userData.username
             })
+
+            console.log('enthaanivide',emailExists);
 
             if (emailExists) {
 
@@ -49,8 +51,7 @@ module.exports = {
             let user = await db.get().collection(collections.USER_COLLECTION).findOne({
                 username: loginData.username
             })
-            console.log('aalund', user);
-
+            
             if (user) {
                 bcrypt.compare(loginData.password, user.password).then((status) => {
 
@@ -69,5 +70,27 @@ module.exports = {
                 resolve(response)
             }
         })
+    },
+    getAllUsers: ()=>{
+        return new Promise(async(resolve,reject)=>{
+
+            let users =await db.get().collection(collections.USER_COLLECTION).find().toArray()
+
+            resolve(users)
+            
+        })
+    },
+    sendMessage: ()=>{
+
+    },
+    getOldChat: (receiver,sender)=>{
+        console.log('at function',receiver,sender);
+        let chat = db.get().collection(collections.USER_COLLECTION).findOne({_id:ObjectId(sender)},{
+            chat:{$elemMatch:{to:ObjectId(receiver)}}
+        })
+
+        console.log('Yahoo..',chat);
+
+
     }
 }

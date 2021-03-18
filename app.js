@@ -17,13 +17,14 @@ io.on("connection",(socket)=>{
   
   console.log("connect aayi mwonuse...");
 
-  socket.emit('message','welcome to JusTalk')
-
-  socket.broadcast.emit('message','A user has joined the chat')
-
   socket.on("disconnect",()=>{
     console.log("connection closed");
     io.emit('message','A user has left the chat')
+  })
+
+  socket.on("message",(msg)=>{
+    console.log(msg);
+    io.emit("board_content",msg)
   })
 
 })
