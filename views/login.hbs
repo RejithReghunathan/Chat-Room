@@ -1,76 +1,114 @@
-<div class="account-pages my-5 pt-sm-5">
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="fonts/icomoon/style.css">
+
+<link rel="stylesheet" href="css/owl.carousel.min.css">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="css/bootstrap.min.css">
+
+<!-- Style -->
+<link rel="stylesheet" href="css/style.css">
+
+<title>JusTalk | Login</title>
+
+<div class="content">
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6 col-xl-5">
-                <div class="text-center mb-4">
-                    <a href="index.html" class="auth-logo mb-5 d-block">
-                        <img src="assets/images/logo-dark.png" alt="" height="30" class="logo logo-dark">
-                        <img src="assets/images/logo-light.png" alt="" height="30" class="logo logo-light">
-                    </a>
-
-                    <h4>Sign in</h4>
-                    <p class="text-muted mb-4">Log in to continue to JusTalk.</p>
-
-                </div>
-
-                <div class="card">
-                    <div class="card-body p-4">
-                        <div class="p-3">
-                            <form action="https://themesbrand.com/chatvia/layouts/index.html">
-
-                                <div class="mb-3">
-                                    <label class="form-label">Username</label>
-                                    <div class="input-group mb-3 bg-soft-light rounded-3">
-                                        <span class="input-group-text text-muted" id="basic-addon3">
-                                            <i class="ri-user-2-line"></i>
-                                        </span>
-                                        <input type="text"
-                                            class="form-control form-control-lg border-light bg-soft-light"
-                                            placeholder="Enter Username" aria-label="Enter Username"
-                                            aria-describedby="basic-addon3">
-                                    </div>
-                                </div>
-
-                                <div class="mb-4">
-                                    <div class="float-end">
-                                        <a href="auth-recoverpw.html" class="text-muted font-size-13">Forgot
-                                            password?</a>
-                                    </div>
-                                    <label class="form-label">Password</label>
-                                    <div class="input-group mb-3 bg-soft-light rounded-3">
-                                        <span class="input-group-text text-muted" id="basic-addon4">
-                                            <i class="ri-lock-2-line"></i>
-                                        </span>
-                                        <input type="password"
-                                            class="form-control form-control-lg border-light bg-soft-light"
-                                            placeholder="Enter Password" aria-label="Enter Password"
-                                            aria-describedby="basic-addon4">
-
-                                    </div>
-                                </div>
-
-                                <div class="form-check mb-4">
-                                    <input type="checkbox" class="form-check-input" id="remember-check">
-                                    <label class="form-check-label" for="remember-check">Remember me</label>
-                                </div>
-
-                                <div class="d-grid">
-                                    <button class="btn btn-primary waves-effect waves-light" type="submit">Sign
-                                        in</button>
-                                </div>
-
-                            </form>
+        <div class="row">
+            <div class="col-md-6 order-md-2">
+                <img src="images/undraw_file_sync_ot38.svg" alt="Image" class="img-fluid">
+            </div>
+            <div class="col-md-6 contents">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="mb-4">
+                            <h3>Sign In to <strong>JusTalk</strong></h3>
+                            <p class="mb-4">Lorem ipsum dolor sit amet elit. Sapiente sit aut eos consectetur
+                                adipisicing.</p>
                         </div>
+                        <form action="/login" method="POST" id="login">
+                            <div class="form-group first">
+                                <label for="username">Username</label>
+                                <input type="text" name="username" class="form-control" id="username">
+
+                            </div>
+                            <div class="form-group last mb-4">
+                                <label for="password">Password</label>
+                                <input type="password" name="password" class="form-control" id="password">
+
+                            </div>
+
+                            <p id="invalidError" style="display: none;color: #f73f3f;text-align: center;">Invalid username or password</p>
+                            <p id="notError" style="display: none;color: #f73f3f;text-align: center;">Sorry, you don't have an account</p>
+
+                            <div class="d-flex mb-5 align-items-center">
+                                <label class="control control--checkbox mb-0"><span class="caption">Remember
+                                        me</span>
+                                    <input type="checkbox" checked="checked" />
+                                    <div class="control__indicator"></div>
+                                </label>
+                                <span class="ml-auto"><a href="#" class="forgot-pass">Forgot Password</a></span>
+                            </div>
+
+                            <input type="submit" value="Log In" class="btn text-white btn-block btn-primary">
+
+                            <span class="d-block text-left my-4 text-muted"> or sign in with</span>
+
+                            <div class="social-login">
+                                <a href="#" class="facebook">
+                                    <span class="icon-facebook mr-3"></span>
+                                </a>
+                                <a href="#" class="twitter">
+                                    <span class="icon-twitter mr-3"></span>
+                                </a>
+                                <a href="#" class="google">
+                                    <span class="icon-google mr-3"></span>
+                                </a>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
-                <div class="mt-5 text-center">
-                    <p>Don't have an account ? <a href="auth-register.html" class="fw-medium text-primary"> Signup now
-                        </a> </p>
-                    <p>©
-                        <script>document.write(new Date().getFullYear())</script> JusTalk </p>
-                </div>
             </div>
+
         </div>
     </div>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+    $("#login").submit(function (e) {
+        e.preventDefault(); // prevent actual form submit
+        var form = $(this);
+        var url = form.attr('action'); //get submit url [replace url here if desired]
+        console.log('ethiyalloo')
+        $.ajax({
+            method: "POST",
+            url: url,
+            data: form.serialize(), // serializes form input
+            success: function (data) {
+                console.log('returne to ajax',data)
+                
+                    console.log(data);
+                    if (data.status) {
+                        window.location.href = "/"
+                    }else if(data.wrong){
+                        document.getElementById('notError').style.display = "none"
+                        document.getElementById('invalidError').style.display = "block"
+                    }else{
+                        console.log('arrived')
+                        document.getElementById('invalidError').style.display = "none"
+                        document.getElementById('notError').style.display = "block"
+                    }
+
+                
+            }
+        });
+    });
+</script>
