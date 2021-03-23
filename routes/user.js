@@ -18,7 +18,8 @@ var verifyLogin = (req, res, next) => {
 router.get('/', verifyLogin, async function (req, res, next) {
 
   let users =await userHelper.getAllUsers()
-  
+  console.log(users);
+    
   res.render('home',{users,userData:req.session.user});
 
 });

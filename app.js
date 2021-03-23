@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var db = require('./config/connection')
 var session = require('express-session')
+var helpers = require('handlebars-helpers')();
+
 
 var userRouter = require('./routes/user');
 var adminRouter = require('./routes/admin');
@@ -14,6 +16,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 io.on("connection",(socket)=>{
+  console.log('New User Logged In with ID '+socket.id);
   
   console.log("connect aayi mwonuse...");
 
@@ -24,7 +27,7 @@ io.on("connection",(socket)=>{
 
   socket.on("message",(msg)=>{
     console.log(msg);
-    io.emit("board_content",msg)
+    io.emit("board_content",msg);
   })
 
 })

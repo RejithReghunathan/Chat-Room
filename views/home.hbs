@@ -22,6 +22,11 @@
     .dropdown-toggle::after {
         content: none;
     }
+
+    h1{
+        margin-bottom: .35rem;
+    }
+
 </style>
 
 {{!-- <div class="green-background"></div> --}}
@@ -29,9 +34,12 @@
     <section class="left">
         <div class="profile">
             <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1089577/user.jpg">
-            
+
             <p id="username" style="margin-top: auto;margin-right: auto">{{userData.username}}</p>
-            
+
+            <input type="text" id="thisUser" value="{{userData.username}}" hidden>
+
+            <input type="text" id="secondPerson" value="" hidden>
 
             <div class="icons">
                 <i class="fa fa-commenting fa-lg" aria-hidden="true"></i>
@@ -41,13 +49,14 @@
         <div class="wrap-search">
             <div class="search">
                 <i class="fa fa-search fa" aria-hidden="true"></i>
-                <input type="text" class="input-search" placeholder="Suchen oder neuen Chat beginnen">
+                <input type="text" class="input-search" placeholder="Search users">
             </div>
         </div>
         <div class="contact-list">
             {{!-- active-contact --}}
             {{#each users}}
-            <div class="contact" id="6" onclick="getChat({{this._id}})"><img
+            
+            <div class="contact" id="6" onclick="getChat('{{this.username}}')"><img
                     src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1089577/contact7.JPG" alt="profilpicture">
                 <div class="contact-preview">
                     <div class="contact-text">
@@ -58,16 +67,19 @@
                 <div class="contact-time">
                     <p>17:54</p>
                 </div>
+
             </div>
+            
             {{/each}}
         </div>
     </section>
 
     <section class="right">
         <div class="chat-head">
-            <img alt="profilepicture">
+            {{!-- <img alt="profilepicture"> --}}
+            
             <div class="chat-name">
-                <h1 class="font-name"></h1>
+                <h1 class="font-name" id="secondPersonChat" style="margin-left: 16px;"></h1>
                 <p class="font-online"></p>
             </div>
             <i class="fa fa-search fa-lg" aria-hidden="true"></i>
@@ -88,31 +100,31 @@
 
         </div>
         <div class="wrap-chat">
-            <div class="chat">
-                <div class="chatBubbleMe" id="chatBubbleMe" style="background: #dcf8c6;
-                                                             margin: 0px 0px 10px auto;border-radius: 7px;
-                                                             box-shadow: 0 2px 2px rgb(0 0 0 / 5%);
-                                                             padding: 5px 7px;
-                                                             width: 350px;
-                                                             max-width: 100%;
-                                                             position: relative;
-                                                             display: none;">
-                    <div class="my-mouth"></div>
-                    <div class="content" style="margin: 0.5em 0;
-                        line-height: 120%;
-                        font-size: 0.9em;" id="chatBubbleMeContent"></div>
-                    <div class="time"></div>
-                </div>
+            <div class="chat" id="chat">
+
+                <h2 id="noUserError" style="color: red;display: none;">You have to select a user</h2>
+
             </div>
             <div class="information"></div>
         </div>
         <div class="wrap-message">
-            <i class="fa fa-smile-o fa-lg" aria-hidden="true"></i>
-            <div class="message">
-                <input type="text" id="inputMessage" class="input-message" placeholder="Type a message">
-            </div>
-            {{!-- <i class="fa fa-microphone fa-lg" aria-hidden="true"></i> --}}
-            <button id="send"><span class="iconify" data-inline="false" id="" data-icon="fluent:send-16-filled" style="transform: rotate(
+
+            <form id="sendMessage" style="width: 100%;">
+                <div class="row container-fluid">
+                    <div class="col-sm-3" style="margin: auto;">
+                        <i class="fa fa-smile-o fa-lg" aria-hidden="true"></i>
+                    </div>
+
+                    <div class="col-sm-8" style="margin-top: 8px;">
+                        <div class="message">
+                            <input type="text" id="outputMessage" class="input-message" placeholder="Type a message">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-1" style="margin: auto;">
+                        {{!-- <i class="fa fa-microphone fa-lg" aria-hidden="true"></i> --}}
+                        <button id="send" class="btn" type="submit"><span class="iconify" data-inline="false" id=""
+                                data-icon="fluent:send-16-filled" style="transform: rotate(
                 360deg
                 );
                     color: #aaaaaa;
@@ -123,7 +135,14 @@
                     margin: auto;
                     vertical-align: -15%;
                     width: 60px;">
-                </span></button>
+                            </span></button>
+                    </div>
+
+                </div>
+
+
+
+            </form>
 
         </div>
     </section>
@@ -143,31 +162,77 @@
 
 <script>
     function getChat(secondPerson) {
-        console.log('started')
-        var secondPerson = secondPerson
-        var contact =
+        console.log('started', secondPerson)
 
-            $.ajax({
-                url: form.attr('action'),
+        $("#secondPerson").val(secondPerson)
+        document.getElementById('secondPersonChat').innerHTML=secondPerson
 
-            })
     }
 </script>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
+
     var socket = io();
-    document.getElementById('send').addEventListener("click", () => {
-        console.log('mone clicki')
-        let txt = document.getElementById('inputMessage').value;
-        socket.emit("message", txt)
-    })
+
+    console.log('id undo gooys', socket)
+
+    $("#sendMessage").submit(function (e) {
+        e.preventDefault(); // prevents page reloading
+        let id = "entho id"
+        console.log(id)
+        let vall = $("#outputMessage").val()
+        let thisUser = $("#thisUser").val()
+        let secondUser = $("#secondPerson").val()
+
+        let msg = {
+            from: thisUser,
+            to: secondUser,
+            content: vall
+        }
+
+        if (secondUser) {
+            document.getElementById('noUserError').style.display = "none"
+            socket.emit("message", msg);
+            $("#outputMessage").val("");
+            return true;
+        } else {
+            document.getElementById('noUserError').style.display = "block"
+        }
+
+    });
+
+
+    //document.getElementById('send').addEventListener("click", () => {
+    //    console.log('mone clicki')
+    //    let txt = document.getElementById('inputMessage').value;
+    //    socket.emit("message", txt)
+    //})
 
     socket.on("board_content", (msg) => {
         console.log(msg)
-        document.getElementById("chatBubbleMe").style.display = "block"
-        document.getElementById("chatBubbleMeContent").innerHTML = msg
+        console.log(msg.to)
+        let thisUser = $("#thisUser").val()
+        let secondUser = $("#secondPerson").val()
+        console.log(thisUser)
 
 
+        if (msg.to == thisUser || msg.from == thisUser) {
+            console.log(msg)
+
+            let box = document.createElement("div");
+
+            box.innerText = msg.content;
+
+            if (msg.to == thisUser) {
+                box.style.cssText = 'background: #ffffff;margin: 0px auto 10px 0px;border-radius: 7px;box-shadow: 0 2px 2px rgb(0 0 0 / 5%);padding: 5px 7px;width: 350px;max-width: 100%;position: relative;'
+            } else {
+                box.style.cssText = 'background: #dcf8c6;margin: 0px 0px 10px auto;border-radius: 7px;box-shadow: 0 2px 2px rgb(0 0 0 / 5%);padding: 5px 7px;width: 350px;max-width: 100%;position: relative;';
+            }
+
+            console.log('petti kittii')
+
+            $('#chat').append(box);
+        }
     })
 </script>
