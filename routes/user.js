@@ -17,7 +17,7 @@ var verifyLogin = (req, res, next) => {
 /* GET home page. */
 router.get('/', verifyLogin, async function (req, res, next) {
 
-  let users =await userHelper.getAllUsers()
+  let users =await userHelper.getAllUsers(req.session.user.username)
   console.log(users);
     
   res.render('home',{users,userData:req.session.user});
@@ -30,7 +30,6 @@ router.get('/login', (req, res) => {
   }else{
     res.render('login')
   }
-  
 })
 
 router.post('/login', (req, res) => {

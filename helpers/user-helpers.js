@@ -71,10 +71,10 @@ module.exports = {
             }
         })
     },
-    getAllUsers: ()=>{
+    getAllUsers: (username)=>{
         return new Promise(async(resolve,reject)=>{
 
-            let users =await db.get().collection(collections.USER_COLLECTION).find().toArray()
+            let users =await db.get().collection(collections.USER_COLLECTION).find({ username: { $ne: username }}).toArray()
 
             resolve(users)
             
