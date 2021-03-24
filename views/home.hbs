@@ -15,6 +15,10 @@
 <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 <script src="https://use.fontawesome.com/1c6f725ec5.js"></script>
 
+<script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@3.0.3/dist/index.min.js"></script>
+
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
@@ -23,10 +27,9 @@
         content: none;
     }
 
-    h1{
+    h1 {
         margin-bottom: .35rem;
     }
-
 </style>
 
 {{!-- <div class="green-background"></div> --}}
@@ -55,7 +58,7 @@
         <div class="contact-list">
             {{!-- active-contact --}}
             {{#each users}}
-            
+
             <div class="contact" id="6" onclick="getChat('{{this.username}}')"><img
                     src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1089577/contact7.JPG" alt="profilpicture">
                 <div class="contact-preview">
@@ -69,7 +72,7 @@
                 </div>
 
             </div>
-            
+
             {{/each}}
         </div>
     </section>
@@ -77,7 +80,7 @@
     <section class="right">
         <div class="chat-head">
             {{!-- <img alt="profilepicture"> --}}
-            
+
             <div class="chat-name">
                 <h1 class="font-name" id="secondPersonChat" style="margin-left: 16px;"></h1>
                 <p class="font-online"></p>
@@ -99,20 +102,52 @@
             <i class="fa fa-times fa-lg" aria-hidden="true" id="close-contact-information"></i>
 
         </div>
-        <div class="wrap-chat">
+        <div class="wrap-chat" id="wrap-chat" style="height: calc(100% - 60px);">
+
             <div class="chat" id="chat">
+
+                <div class="" id="moddal">
+                    <div id="" class="row p-0 m-0">
+                        <div id="webcam-container" style="background-attachment: fixed;height: 100vh;
+    width: 100vw;" class="webcam-container col-12  p-0 m-0">
+                            <video id="webcam" autoplay playsinline width="640" height="480"></video>
+                            <canvas id="canvas" class=""></canvas>
+                            <div class="flash"></div>
+                            <audio id="snapSound" src="audio/snap.wav" preload="auto"></audio>
+                        </div>
+                        <div id="cameraControls" class="cameraControls" style="margin-top: -16px;position: absolute;
+                            bottom: 10vh;
+                            z-index: 99999;
+                            background: transparent;
+                            opacity: 0.7;
+                            padding: 10px;">
+                            <a href="#" id="exit-app" title="Exit App" class="d-none"><span class="iconify" data-inline="false" data-icon="akar-icons:arrow-back"></span></a>
+                            <a href="#" id="take-photo" title="Take Photo" style="display: none;"><i class="fa fa-camera"></i></a>
+                            <a href="#" id="download-photo" download="selfie.png" target="_blank" title="Save Photo"
+                                class="d-none"><span class="iconify" data-inline="false" data-icon="bx:bxs-download"></span></a>
+                            {{!-- <a href="#" id="resume-camera" title="Resume Camera" class="d-none"><i
+                                    class="material-icons">camera_front</i></a> --}}
+                        </div>
+                    </div>
+                </div>
+
 
                 <h2 id="noUserError" style="color: red;display: none;">You have to select a user</h2>
 
             </div>
             <div class="information"></div>
         </div>
-        <div class="wrap-message">
+        <div class="wrap-message" id="wrapMessage" style="display: none;">
 
             <form id="sendMessage" style="width: 100%;">
                 <div class="row container-fluid">
                     <div class="col-sm-3" style="margin: auto;">
-                        <i class="fa fa-smile-o fa-lg" aria-hidden="true"></i>
+                        <i class="fa fa-smile-o fa-lg" aria-hidden="true" id="emojiIcon"></i>
+                        <input type="file" hidden id="fileUpload">
+                        <span id="fuIcon" onclick="fileUpload()" style="cursor: pointer;" class="iconify" data-inline="false" data-icon="simple-line-icons:paper-clip"></span>
+                        <i class="fa fa-camera fa-lg" style="cursor: pointer;" onclick="startCamera()"
+                            aria-hidden="true"></i>
+                        
                     </div>
 
                     <div class="col-sm-8" style="margin-top: 8px;">
@@ -123,6 +158,7 @@
 
                     <div class="col-sm-1" style="margin: auto;">
                         {{!-- <i class="fa fa-microphone fa-lg" aria-hidden="true"></i> --}}
+
                         <button id="send" class="btn" type="submit"><span class="iconify" data-inline="false" id=""
                                 data-icon="fluent:send-16-filled" style="transform: rotate(
                 360deg
@@ -165,7 +201,11 @@
         console.log('started', secondPerson)
 
         $("#secondPerson").val(secondPerson)
-        document.getElementById('secondPersonChat').innerHTML=secondPerson
+        document.getElementById('secondPersonChat').innerHTML = secondPerson
+
+        $("#wrapMessage").show()
+
+        $("#wrap-chat").css("height: calc(100% - 60px);")
 
     }
 </script>
@@ -235,4 +275,78 @@
             $('#chat').append(box);
         }
     })
+
+</script>
+
+<script>
+    const webcamElement = document.getElementById('webcam');
+    const canvasElement = document.getElementById('canvas');
+    const snapSoundElement = document.getElementById('snapSound');
+    const webcam = new Webcam(webcamElement, 'user', canvasElement, snapSoundElement);
+
+    function startCamera() {
+        console.log('reached')
+        $('#moddal').show()
+        
+        document.getElementById('take-photo').style.display = "block"
+        
+        webcam.start()
+            .then(result => {
+                console.log("webcam started");
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    function beforeTakePhoto() {
+        //$('.flash')
+        //    .show()
+        //    .animate({ opacity: 0.3 }, 500)
+        //    .fadeOut(500)
+        //    .css({ 'opacity': 0.7 });
+        //window.scrollTo(0, 0);
+        $('#webcam-control').addClass('d-none');
+        $('#cameraControls').addClass('d-none');
+    }
+
+    function afterTakePhoto() {
+        webcam.stop();
+        $('#canvas').removeClass('d-none');
+        $('#take-photo').addClass('d-none');
+        $('#exit-app').removeClass('d-none');
+        $('#download-photo').removeClass('d-none');
+        $('#resume-camera').removeClass('d-none');
+        $('#cameraControls').removeClass('d-none');
+    }
+
+    $("#take-photo").click(function () {
+        console.log('reached')
+        beforeTakePhoto();
+        let picture = webcam.snap();
+        document.querySelector('#download-photo').href = picture;
+        $('#webcam').hide()
+        afterTakePhoto();
+    });
+
+    function fileUpload(){
+        $('#fileUpload').click()
+    }
+
+    let emojiIcon = document.querySelector('#emojiIcon')
+    let outputMessage = document.querySelector('#outputMessage')    
+
+    let picker = new EmojiButton({
+        position: 'right-start'
+    })
+
+    picker.on('emoji', (emoji)=>{
+        outputMessage.value += emoji
+    })
+
+    emojiIcon.addEventListener('click',()=>{
+        picker.pickerVisible ? picker.hidePicker() : picker.showPicker(emojiIcon)
+    })
+
+
 </script>
