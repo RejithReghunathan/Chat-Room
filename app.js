@@ -4,8 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var db = require('./config/connection')
+var userHelper = require('./helpers/user-helpers')
 var session = require('express-session')
 var helpers = require('handlebars-helpers')();
+var moment = require('moment');
 
 
 var userRouter = require('./routes/user');
@@ -26,7 +28,11 @@ io.on("connection",(socket)=>{
   })
 
   socket.on("message",(msg)=>{
-    console.log(msg);
+    
+    var d= new Date();
+    msg.date = moment(d).format('lll');
+    
+    userHelper.insertMessage(msg)
     io.emit("board_content",msg);
   })
 

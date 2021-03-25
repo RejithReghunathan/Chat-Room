@@ -109,7 +109,7 @@
                 <div class="" id="moddal">
                     <div id="" class="row p-0 m-0">
                         <div id="webcam-container" style="background-attachment: fixed;height: 100vh;
-    width: 100vw;" class="webcam-container col-12  p-0 m-0">
+                            width: 100vw;display:none" class="webcam-container col-12  p-0 m-0">
                             <video id="webcam" autoplay playsinline width="640" height="480"></video>
                             <canvas id="canvas" class=""></canvas>
                             <div class="flash"></div>
@@ -121,10 +121,13 @@
                             background: transparent;
                             opacity: 0.7;
                             padding: 10px;">
-                            <a href="#" id="exit-app" title="Exit App" class="d-none"><span class="iconify" data-inline="false" data-icon="akar-icons:arrow-back"></span></a>
-                            <a href="#" id="take-photo" title="Take Photo" style="display: none;"><i class="fa fa-camera"></i></a>
+                            <a href="#" id="exit-app" title="Exit App" class="d-none"><span class="iconify"
+                                    data-inline="false" data-icon="akar-icons:arrow-back"></span></a>
+                            <a href="#" id="take-photo" title="Take Photo" style="display: none;"><i
+                                    class="fa fa-camera"></i></a>
                             <a href="#" id="download-photo" download="selfie.png" target="_blank" title="Save Photo"
-                                class="d-none"><span class="iconify" data-inline="false" data-icon="bx:bxs-download"></span></a>
+                                class="d-none"><span class="iconify" data-inline="false"
+                                    data-icon="bx:bxs-download"></span></a>
                             {{!-- <a href="#" id="resume-camera" title="Resume Camera" class="d-none"><i
                                     class="material-icons">camera_front</i></a> --}}
                         </div>
@@ -144,10 +147,11 @@
                     <div class="col-sm-3" style="margin: auto;">
                         <i class="fa fa-smile-o fa-lg" aria-hidden="true" id="emojiIcon"></i>
                         <input type="file" hidden id="fileUpload">
-                        <span id="fuIcon" onclick="fileUpload()" style="cursor: pointer;" class="iconify" data-inline="false" data-icon="simple-line-icons:paper-clip"></span>
+                        <span id="fuIcon" onclick="fileUpload()" style="cursor: pointer;" class="iconify"
+                            data-inline="false" data-icon="simple-line-icons:paper-clip"></span>
                         <i class="fa fa-camera fa-lg" style="cursor: pointer;" onclick="startCamera()"
                             aria-hidden="true"></i>
-                        
+
                     </div>
 
                     <div class="col-sm-8" style="margin-top: 8px;">
@@ -196,6 +200,9 @@
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
 <script>
     function getChat(secondPerson) {
         console.log('started', secondPerson)
@@ -206,6 +213,17 @@
         $("#wrapMessage").show()
 
         $("#wrap-chat").height("calc(100% - 120px)");
+
+        $.ajax({
+            url: '/getChat',
+            method: 'post',
+            data: {username:secondPerson},
+            success: (response) => {
+                if (response) {
+
+                }
+            }
+        })
 
     }
 </script>
@@ -225,20 +243,23 @@
         let thisUser = $("#thisUser").val()
         let secondUser = $("#secondPerson").val()
 
-        let msg = {
-            from: thisUser,
-            to: secondUser,
-            content: vall
+        if (vall) {
+            let msg = {
+                from: thisUser,
+                to: secondUser,
+                content: vall
+            }
+
+            if (secondUser) {
+                document.getElementById('noUserError').style.display = "none"
+                socket.emit("message", msg);
+                $("#outputMessage").val("");
+                return true;
+            } else {
+                document.getElementById('noUserError').style.display = "block"
+            }
         }
 
-        if (secondUser) {
-            document.getElementById('noUserError').style.display = "none"
-            socket.emit("message", msg);
-            $("#outputMessage").val("");
-            return true;
-        } else {
-            document.getElementById('noUserError').style.display = "block"
-        }
 
     });
 
@@ -261,18 +282,29 @@
             console.log(msg)
 
             let box = document.createElement("div");
+            let timeDiv = document.createElement("div")
 
             box.innerText = msg.content;
+            timeDiv.innerText = msg.date;
 
             if (msg.to == thisUser) {
-                box.style.cssText = 'background: #ffffff;margin: 0px auto 10px 0px;border-radius: 7px;box-shadow: 0 2px 2px rgb(0 0 0 / 5%);padding: 5px 7px;width: 350px;max-width: 100%;position: relative;'
+                box.style.cssText = 'background: #ffffff;margin: 0px auto 10px 0px;border-radius: 7px;box-shadow: 0 2px 2px rgb(0 0 0 / 5%);padding: 5px 7px;width: 350px;max-width: 100%;position: relative;';
+                timeDiv.style.cssText = 'color: rgba(0,0,0,0.4);font-size: 0.6em;text-align: right;margin-top: -10px;';
             } else {
                 box.style.cssText = 'background: #dcf8c6;margin: 0px 0px 10px auto;border-radius: 7px;box-shadow: 0 2px 2px rgb(0 0 0 / 5%);padding: 5px 7px;width: 350px;max-width: 100%;position: relative;';
+                timeDiv.style.cssText = 'color: rgba(0,0,0,0.4);font-size: 0.6em;text-align: right;margin-top: -10px;';
             }
 
             console.log('petti kittii')
 
             $('#chat').append(box);
+            $(box).append(timeDiv);
+
+            //const $messages = document.querySelector('#chat')
+
+            //const autoscroll = () =>{
+            //    $messages.scrollTop = $messages.scrollHeight
+            //}
         }
     })
 
@@ -287,9 +319,10 @@
     function startCamera() {
         console.log('reached')
         $('#moddal').show()
-        
+
         document.getElementById('take-photo').style.display = "block"
-        
+        document.getElementById('webcam-container').style.display = "block"
+
         webcam.start()
             .then(result => {
                 console.log("webcam started");
@@ -329,24 +362,26 @@
         afterTakePhoto();
     });
 
-    function fileUpload(){
+    function fileUpload() {
         $('#fileUpload').click()
     }
 
     let emojiIcon = document.querySelector('#emojiIcon')
-    let outputMessage = document.querySelector('#outputMessage')    
+    let outputMessage = document.querySelector('#outputMessage')
 
     let picker = new EmojiButton({
         position: 'right-start'
     })
 
-    picker.on('emoji', (emoji)=>{
+    picker.on('emoji', (emoji) => {
         outputMessage.value += emoji
     })
 
-    emojiIcon.addEventListener('click',()=>{
+    emojiIcon.addEventListener('click', () => {
         picker.pickerVisible ? picker.hidePicker() : picker.showPicker(emojiIcon)
     })
 
+    //const chatBox = document.querySelector('.chat');
+    //chatBox.scrollTop=chatBox.scrollHeight
 
 </script>

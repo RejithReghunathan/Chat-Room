@@ -5,20 +5,20 @@ const bcrypt = require('bcrypt')
 
 module.exports = {
     signup: (userData) => {
-        console.log("****vaadaaa",userData);
+        console.log("****vaadaaa", userData);
         var response = {}
         return new Promise(async (resolve, reject) => {
             console.log(userData);
 
-            let emailExists =await db.get().collection(collections.USER_COLLECTION).findOne({
+            let emailExists = await db.get().collection(collections.USER_COLLECTION).findOne({
                 email: userData.email
             })
 
-            let usernameExists =await db.get().collection(collections.USER_COLLECTION).findOne({
+            let usernameExists = await db.get().collection(collections.USER_COLLECTION).findOne({
                 username: userData.username
             })
 
-            console.log('enthaanivide',emailExists);
+            console.log('enthaanivide', emailExists);
 
             if (emailExists) {
 
@@ -51,7 +51,7 @@ module.exports = {
             let user = await db.get().collection(collections.USER_COLLECTION).findOne({
                 username: loginData.username
             })
-            
+
             if (user) {
                 bcrypt.compare(loginData.password, user.password).then((status) => {
 
@@ -71,25 +71,47 @@ module.exports = {
             }
         })
     },
-    getAllUsers: (username)=>{
-        return new Promise(async(resolve,reject)=>{
+    getAllUsers: (username) => {
+        return new Promise(async (resolve, reject) => {
 
-            let users =await db.get().collection(collections.USER_COLLECTION).find({ username: { $ne: username }}).toArray()
+            let users = await db.get().collection(collections.USER_COLLECTION).find({
+                username: {
+                    $ne: username
+                }
+            }).toArray()
 
             resolve(users)
-            
+
         })
     },
-    sendMessage: ()=>{
-
-    },
-    getOldChat: (receiver,sender)=>{
-        console.log('at function',receiver,sender);
-        let chat = db.get().collection(collections.USER_COLLECTION).findOne({_id:ObjectId(sender)},{
-            chat:{$elemMatch:{to:ObjectId(receiver)}}
+    insertMessage: (messageData) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.CHAT_COLLECTION).insertOne(messageData)
+            resolve()
         })
+    },
+    getOldChat: (firstPerson, secondPerson) => {
+        return new Promise(async(resolve, reject) => {
+            console.log('ethiyittunde..');
+            console.log('at function', firstPerson, secondPerson.username);
+            let chat =await db.get().collection(collections.CHAT_COLLECTION).find({
+                $or: [{
+                    $and: [{
+                        from: firstPerson
+                    }, {
+                        to: secondPerson
+                    }]
+                }, {
+                    $and: [{
+                        from: secondPerson
+                    }, {
+                        to: firstPerson
+                    }]
+                }]
+            }).toArray()
 
-        console.log('Yahoo..',chat);
+            console.log('Yahoo..', chat);
+        })
 
 
     }

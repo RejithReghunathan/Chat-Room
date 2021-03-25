@@ -72,10 +72,10 @@ router.get('/logout', (req, res) => {
   res.redirect('/')
 })
 
-router.get('/getChat:id',(req,res)=>{
-  console.log('usere',req.params.id);
+router.post('/getChat',(req,res)=>{
+  console.log('usere',req.body);
 
-  let oldChat = userHelper.getOldChat(req.params.id,req.session.user._id)
+  let oldChat = userHelper.getOldChat(req.session.user.username,req.body)
 })
 
 module.exports = router;
