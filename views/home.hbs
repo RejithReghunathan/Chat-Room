@@ -106,6 +106,12 @@
 
             <div class="chat" id="chat">
 
+
+
+
+
+
+
                 <div class="" id="moddal">
                     <div id="" class="row p-0 m-0">
                         <div id="webcam-container" style="background-attachment: fixed;height: 100vh;
@@ -208,6 +214,7 @@
         console.log('started', secondPerson)
 
         $("#secondPerson").val(secondPerson)
+        let thisUser = $("#thisUser").val()
         document.getElementById('secondPersonChat').innerHTML = secondPerson
 
         $("#wrapMessage").show()
@@ -217,9 +224,54 @@
         $.ajax({
             url: '/getChat',
             method: 'post',
-            data: {username:secondPerson},
+            data: { username: secondPerson },
+
             success: (response) => {
                 if (response) {
+                    console.log(response)
+                    //let box = document.createElement("div");
+                    //let timeDiv = document.createElement("div")
+                    //box.innerText = response.content;
+                    //timeDiv.innerText = response.date;
+
+                    //if (response.to == thisUser) {
+                    //    box.style.cssText = 'background: #ffffff;margin: 0px auto 10px 0px;border-radius: 7px;box-shadow: 0 2px 2px rgb(0 0 0 / 5%);padding: 5px 7px;width: 350px;max-width: 100%;position: relative;';
+                    //    timeDiv.style.cssText = 'color: rgba(0,0,0,0.4);font-size: 0.6em;text-align: right;margin-top: -10px;';
+                    //} else {
+                    //    box.style.cssText = 'background: #dcf8c6;margin: 0px 0px 10px auto;border-radius: 7px;box-shadow: 0 2px 2px rgb(0 0 0 / 5%);padding: 5px 7px;width: 350px;max-width: 100%;position: relative;';
+                    //    timeDiv.style.cssText = 'color: rgba(0,0,0,0.4);font-size: 0.6em;text-align: right;margin-top: -10px;';
+                    //}
+
+                    //$('#chat').append(box);
+                    //$(box).append(timeDiv);
+
+
+
+                    $.each(response, function (i, item) {
+                        console.log(item.content)
+
+                        let box = document.createElement("div");
+                        let timeDiv = document.createElement("div")
+
+                        box.innerText = item.content;
+                        timeDiv.innerText = item.date;
+
+                        if (item.to == thisUser) {
+                            box.style.cssText = 'background: #ffffff;margin: 0px auto 10px 0px;border-radius: 7px;box-shadow: 0 2px 2px rgb(0 0 0 / 5%);padding: 5px 7px;width: 350px;max-width: 100%;position: relative;';
+                            timeDiv.style.cssText = 'color: rgba(0,0,0,0.4);font-size: 0.6em;text-align: right;margin-top: -10px;';
+                        } else {
+                            box.style.cssText = 'background: #dcf8c6;margin: 0px 0px 10px auto;border-radius: 7px;box-shadow: 0 2px 2px rgb(0 0 0 / 5%);padding: 5px 7px;width: 350px;max-width: 100%;position: relative;';
+                            timeDiv.style.cssText = 'color: rgba(0,0,0,0.4);font-size: 0.6em;text-align: right;margin-top: -10px;';
+                        }
+
+                        console.log('petti kittii')
+
+                        $('#chat').append(box);
+                        $(box).append(timeDiv);
+
+                    });
+
+
 
                 }
             }

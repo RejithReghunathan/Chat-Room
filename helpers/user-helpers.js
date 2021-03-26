@@ -99,11 +99,11 @@ module.exports = {
                     $and: [{
                         from: firstPerson
                     }, {
-                        to: secondPerson
+                        to: secondPerson.username
                     }]
                 }, {
                     $and: [{
-                        from: secondPerson
+                        from: secondPerson.username
                     }, {
                         to: firstPerson
                     }]
@@ -111,6 +111,7 @@ module.exports = {
             }).toArray()
 
             console.log('Yahoo..', chat);
+            resolve(chat)
         })
 
 

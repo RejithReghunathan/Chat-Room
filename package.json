@@ -11,6 +11,7 @@
     "debug": "~2.6.9",
     "ember-truth-helpers": "^3.0.0",
     "express": "~4.16.1",
+    "express-handlebars": "^5.2.1",
     "express-session": "^1.17.1",
     "handlebars-helpers": "^0.10.0",
     "hbs": "^4.1.1",

@@ -72,10 +72,12 @@ router.get('/logout', (req, res) => {
   res.redirect('/')
 })
 
-router.post('/getChat',(req,res)=>{
+router.post('/getChat',async(req,res)=>{
   console.log('usere',req.body);
 
-  let oldChat = userHelper.getOldChat(req.session.user.username,req.body)
+  let oldChat =await userHelper.getOldChat(req.session.user.username,req.body)
+  console.log("**jj**",oldChat);
+  res.json(oldChat)
 })
 
 module.exports = router;
