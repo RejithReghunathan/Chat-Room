@@ -51,6 +51,7 @@ module.exports = {
             let user = await db.get().collection(collections.USER_COLLECTION).findOne({
                 username: loginData.username
             })
+            console.log('ww',user);
 
             if (user) {
                 bcrypt.compare(loginData.password, user.password).then((status) => {
