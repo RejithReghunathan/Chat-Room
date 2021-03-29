@@ -101,7 +101,11 @@
             </div>
 
             {{/each}}
+
         </div>
+
+
+
     </section>
 
     <section class="right">
@@ -132,6 +136,8 @@
         <div class="wrap-chat" id="wrap-chat" style="height: calc(100% - 60px);">
 
             <div class="chat" id="chat">
+
+
 
                 <div class="" id="moddal">
                     <div id="" class="row p-0 m-0">
@@ -195,8 +201,8 @@
                                         <img src="" alt="" id="previewImage" style="height: 22rem;width: 23rem;">
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-default" onclick="sendImage()" data-dismiss="modal"><span
-                                                class="iconify" data-inline="false" id=""
+                                        <button type="button" class="btn btn-default" onclick="sendImage()"
+                                            data-dismiss="modal"><span class="iconify" data-inline="false" id=""
                                                 data-icon="fluent:send-16-filled" style="transform: rotate(
                                                     360deg
                                                     );
@@ -325,7 +331,34 @@
                         let box = document.createElement("div");
                         let timeDiv = document.createElement("div")
 
-                        box.innerText = item.content;
+                        if (item.image) {
+                            function dataURLtoFile(dataurl, filename) {
+
+                                var arr = dataurl.split(','),
+                                    mime = arr[0].match(/:(.*?);/)[1],
+                                    bstr = atob(arr[1]),
+                                    n = bstr.length,
+                                    u8arr = new Uint8Array(n);
+
+                                while (n--) {
+                                    u8arr[n] = bstr.charCodeAt(n);
+                                }
+
+                                return new File([u8arr], filename, { type: mime });
+                            }
+                       
+                            box.innerHTML += '<img src="' + file + '" style="width: 14rem;height: 13rem;" />';
+                            
+                            //Usage example:
+                            var file = dataURLtoFile(item.content, 'hello.txt');
+                            console.log(file);
+                            //box.innerText = file;
+                            
+                        }else{
+                            box.innerText = item.content;
+                        }
+
+                        
                         timeDiv.innerText = item.date;
 
                         if (item.to == thisUser) {
@@ -354,6 +387,8 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
 
+    //socket.emit('image', { image: true, buffer: buf.toString('base64') });
+
     var socket = io();
 
     console.log('id undo gooys', socket)
@@ -362,11 +397,21 @@
         e.preventDefault(); // prevents page reloading
         let id = "entho id"
         console.log(id)
+
+
+
         let vall = $("#outputMessage").val()
         let thisUser = $("#thisUser").val()
         let secondUser = $("#secondPerson").val()
-        let image = $('#fileUpload').val()
-        console.log(image)
+
+        if (vall) {
+            var image = ''
+        } else {
+            var image = $('#fileUpload').val()
+        }
+
+
+        console.log('image aaane', image)
 
         console.log(vall, thisUser, secondUser)
 
@@ -384,6 +429,64 @@
             } else {
                 document.getElementById('noUserError').style.display = "block"
             }
+        } else if (image) {
+            console.log('image section', image)
+
+
+            if (secondUser) {
+                console.log('pani thudangi')
+
+                const toBase64 = file => new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = error => reject(error);
+                });
+
+                async function Main() {
+                    const file = document.querySelector('#fileUpload').files[0];
+                    console.log('ith file hmm', file)
+                    var result = await toBase64(file).catch(e => Error(e));
+
+                    if (result instanceof Error) {
+                        console.log('Error: ', result.message);
+                        return;
+                    }
+                    //...
+                    let msg = {
+                        from: thisUser,
+                        to: secondUser,
+                        content: result,
+                        image: true
+                    }
+                    console.log('ayachu', msg)
+
+                    socket.emit('message', msg)
+                }
+
+                Main()
+
+
+
+                //socket.emit('message', { image: true, buffer: buf.toString('base64') });
+                ////socket.emit("message", msg);
+                //$("#outputMessage").val("");
+                //return true;
+
+                //var reader = new FileReader();
+                //reader.onload = function (evt) {
+                //    var msg = {};
+                //    msg.username = 'img-test-name';
+                //    msg.content = evt.target.result;
+                //    //msg.fileName = data.name;
+                //    socket.emit('message', msg);
+                //};
+
+                //reader.readAsDataURL(data);
+
+            } else {
+                document.getElementById('noUserError').style.display = "block"
+            }
         }
 
 
@@ -397,28 +500,38 @@
     //})
 
     socket.on("board_content", (msg) => {
+        console.log('thirichethi')
         console.log(msg)
-        console.log(msg.to)
+
         let thisUser = $("#thisUser").val()
         let secondUser = $("#secondPerson").val()
+
+
+
         console.log(thisUser)
 
 
         if (msg.to == thisUser || msg.from == thisUser) {
-            console.log(msg)
+
 
             let box = document.createElement("div");
             let timeDiv = document.createElement("div")
 
-            box.innerText = msg.content;
-            timeDiv.innerText = msg.date;
+            if (msg.image) {
+                box.innerHTML += '<img src="' + msg.content + '" style="width: 14rem;height: 13rem;" />';
+                timeDiv.innerText = msg.date;
+            } else {
+                box.innerText = msg.content;
+                timeDiv.innerText = msg.date;
+            }
+
 
             if (msg.to == thisUser) {
                 box.style.cssText = 'background: #ffffff;margin: 0px auto 10px 0px;border-radius: 7px;box-shadow: 0 2px 2px rgb(0 0 0 / 5%);padding: 5px 7px;width: 350px;max-width: 100%;position: relative;';
-                timeDiv.style.cssText = 'color: rgba(0,0,0,0.4);font-size: 0.6em;text-align: right;margin-top: -10px;';
+                timeDiv.style.cssText = 'color: rgba(0,0,0,0.4);font-size: 0.6em;text-align: right;margin-top: 3px;';
             } else {
                 box.style.cssText = 'background: #dcf8c6;margin: 0px 0px 10px auto;border-radius: 7px;box-shadow: 0 2px 2px rgb(0 0 0 / 5%);padding: 5px 7px;width: 350px;max-width: 100%;position: relative;';
-                timeDiv.style.cssText = 'color: rgba(0,0,0,0.4);font-size: 0.6em;text-align: right;margin-top: -10px;';
+                timeDiv.style.cssText = 'color: rgba(0,0,0,0.4);font-size: 0.6em;text-align: right;margin-top: 3px;';
             }
 
             console.log('petti kittii')
@@ -492,7 +605,7 @@
     function fileUpload() {
         $('#fileUpload').click()
         let file = $('#fileUpload').val()
-        console.log('ithaanu chaadhanam', file)
+
     }
 
     let emojiIcon = document.querySelector('#emojiIcon')
@@ -560,7 +673,15 @@
         document.getElementById('previewImage').src = URL.createObjectURL(event.target.files[0])
     }
 
-    function sendImage(){
+    function sendImage() {
+        $("#outputMessage").val('')
         $('#send').click()
     }
+
+    //$("#myModal").on("hidden.bs.modal", function () {
+    //    console.log('modal function')
+    //    $("#fileUpload").val('');
+    //});
+
+
 </script>

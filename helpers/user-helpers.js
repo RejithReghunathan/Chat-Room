@@ -2,6 +2,7 @@ const db = require('../config/connection')
 const collections = require('../config/collections')
 var ObjectId = require('mongodb').ObjectID
 const bcrypt = require('bcrypt')
+var base64ToImage = require('base64-to-image');
 
 module.exports = {
     signup: (userData) => {
@@ -51,7 +52,7 @@ module.exports = {
             let user = await db.get().collection(collections.USER_COLLECTION).findOne({
                 username: loginData.username
             })
-            console.log('ww',user);
+            console.log('ww', user);
 
             if (user) {
                 bcrypt.compare(loginData.password, user.password).then((status) => {
@@ -87,15 +88,16 @@ module.exports = {
     },
     insertMessage: (messageData) => {
         return new Promise((resolve, reject) => {
+            
             db.get().collection(collections.CHAT_COLLECTION).insertOne(messageData)
             resolve()
         })
     },
     getOldChat: (firstPerson, secondPerson) => {
-        return new Promise(async(resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             console.log('ethiyittunde..');
             console.log('at function', firstPerson, secondPerson.username);
-            let chat =await db.get().collection(collections.CHAT_COLLECTION).find({
+            let chat = await db.get().collection(collections.CHAT_COLLECTION).find({
                 $or: [{
                     $and: [{
                         from: firstPerson

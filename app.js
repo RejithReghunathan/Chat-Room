@@ -8,6 +8,7 @@ var userHelper = require('./helpers/user-helpers')
 var session = require('express-session')
 var helpers = require('handlebars-helpers')();
 var moment = require('moment');
+var fs = require('fs');
 
 
 var userRouter = require('./routes/user');
@@ -27,12 +28,16 @@ io.on("connection",(socket)=>{
     io.emit('message','A user has left the chat')
   })
 
-  socket.on("message",(msg)=>{
+  socket.on("message",(msg)=>{ 
+    console.log('vannu thirichayachu')
+
+    
     
     var d= new Date();
     msg.date = moment(d).format('lll');
     
     userHelper.insertMessage(msg)
+    
     io.emit("board_content",msg);
   })
 
